@@ -1,0 +1,279 @@
+<div class="audioFiles">
+    <img class="invert" src="Audio.svg" alt="Audio Icon">
+    <span>${element}</span>
+    <img class="invert" src="play.svg" alt="Play Icon">
+  </div>
+
+
+  console.log("Writing javascript for the project");
+  let currentAudio = new Audio();
+  let isPlaying = false;
+  
+  // Convert seconds to MM:SS format
+  function convertSecondsToMinutes(seconds) {
+    let minutes = Math.floor(seconds / 60);
+    let remainingSeconds = Math.floor(seconds % 60);
+  
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    remainingSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds;
+  
+    return `${minutes}:${remainingSeconds}`;
+  }
+  
+  // Fetch the list of audio files from the server
+  async function getAudios() {
+    let response = await fetch("http://127.0.0.1:3000/AudioFiles/");
+    let text = await response.text();
+    let div = document.createElement("div");
+    div.innerHTML = text;
+    let anchorTags = div.getElementsByTagName("a");
+    let audios = [];
+  
+    for (let anchor of anchorTags) {
+      if (anchor.href.endsWith(".mp3")) {
+        audios.push(anchor.href);
+      }
+    }
+    return audios;
+  }
+  
+  // Play the specified audio file
+  function playAudio(track) {
+    currentAudio.src = track;
+    currentAudio.play();
+    isPlaying = true;
+    document.querySelector("#play").src = "pause.svg";
+  
+    // Display the name and duration of the audio being played
+    let trackName = decodeURIComponent(track.split('/').pop());
+    document.querySelector(".audioName").innerHTML = `<span>${trackName}</span>`;
+  }
+  
+  // Update the play bar
+  function updatePlayBar() {
+    if (isPlaying) {
+      document.querySelector("#play").src = "pause.svg";
+    } else {
+      document.querySelector("#play").src = "play.svg";
+    }
+  }
+  
+  // Main function to initialize the audio player
+  async function main() {
+    let audios = await getAudios();
+  
+    if (audios.length > 0) {
+      let firstAudio = audios[0];
+      playAudio(firstAudio);
+  
+      // Display the duration of the audio
+      currentAudio.addEventListener('loadedmetadata', () => {
+        document.querySelector('.audioDuration').innerHTML = `<span>${convertSecondsToMinutes(currentAudio.currentTime)} / ${convertSecondsToMinutes(currentAudio.duration)}</span>`;
+        document.querySelector('.circle').style.left = "0%"; // Reset seekbar position
+      });
+    } else {
+      // Handle case when no audio files are found
+      document.querySelector(".audioName").innerHTML = "<span>No audio files found</span>";
+      document.querySelector(".audioDuration").innerHTML = "<span>00:00 / 00:00</span>";
+      document.querySelector('.circle').style.left = "0%";
+      document.querySelector("#play").src = "play.svg";
+    }
+  
+    // Event listeners for play button
+    document.querySelector('#play').addEventListener("click", () => {
+      if (currentAudio.paused) {
+        currentAudio.play();
+        isPlaying = true;
+        console.log("audio is playing");
+      } else {
+        currentAudio.pause();
+        isPlaying = false;
+        console.log("audio is paused");
+      }
+      updatePlayBar();
+    });
+  
+    // Event listener for time update
+    currentAudio.addEventListener('timeupdate', () => {
+      document.querySelector('.audioDuration').innerHTML = `<span>${convertSecondsToMinutes(currentAudio.currentTime)} / ${convertSecondsToMinutes(currentAudio.duration)}</span>`;
+      document.querySelector('.circle').style.left = (currentAudio.currentTime / currentAudio.duration) * 100 + "%";
+    });
+  
+    // Event listener for seekbar click
+    document.querySelector('.seekbar').addEventListener('click', (e) => {
+      let percent = (e.offsetX / e.target.getBoundingClientRect().width) * 100;
+      document.querySelector('.circle').style.left = percent + "%";
+      currentAudio.currentTime = (currentAudio.duration * percent) / 100;
+    });
+  
+    // Event listeners for sidebar toggle
+    document.querySelector('.hamburger').addEventListener('click', () => {
+      document.querySelector('.left-part').style.left = "0";
+      document.querySelector('.left-part').style.width = "370px";
+    });
+  
+    document.querySelector('.close').addEventListener('click', () => {
+      document.querySelector('.left-part').style.left = "-120%";
+    });
+  }
+  
+  main();
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  console.log("Writing javascript for the project");
+let currentAudio = new Audio();
+let isPlaying = false;
+
+// Convert seconds to MM:SS format
+function convertSecondsToMinutes(seconds) {
+  let minutes = Math.floor(seconds / 60);
+  let remainingSeconds = Math.floor(seconds % 60);
+
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  remainingSeconds = remainingSeconds < 10 ? '0' + remainingSeconds : remainingSeconds;
+
+  return `${minutes}:${remainingSeconds}`;
+}
+
+// Fetch the list of audio files from the server
+async function getAudios() {
+  let response = await fetch("http://127.0.0.1:3000/AudioFiles/");
+  let text = await response.text();
+  let div = document.createElement("div");
+  div.innerHTML = text;
+  let anchorTags = div.getElementsByTagName("a");
+  let audios = [];
+
+  for (let anchor of anchorTags) {
+    if (anchor.href.endsWith(".mp3")) {
+      audios.push(anchor.href);
+    }
+  }
+  return audios;
+}
+
+
+// Play the specified audio file
+function playAudio(track) {
+  currentAudio.src = track;
+  currentAudio.play();
+  isPlaying = true;
+  document.querySelector("#play").src = "pause.svg";
+
+  // Display the name and duration of the audio being played
+  let trackName = decodeURIComponent(track.split('/').pop());
+  let FileUl =  document.querySelector('.audioList').getElementsByTagName('ul');
+  document.querySelector(".audioName").innerHTML = `<span>${trackName}</span>`;
+ 
+}
+
+// Update the play bar
+function updatePlayBar() {
+  if (currentAudio.paused) {
+    document.querySelector("#play").src = "play.svg";
+  } else {
+    document.querySelector("#play").src = "pause.svg";
+  }
+}
+
+// Main function to initialize the audio player
+async function main() {
+  let audios = await getAudios();
+
+  // Populate the library section with audio files
+  let fileUl = document.querySelector(".audioList ul");
+  fileUl.innerHTML = ''; // Clear existing content
+
+  if (audios.length > 0) {
+    for (let audio of audios) {
+      let trackName = decodeURIComponent(audio.split('/').pop());
+      fileUl.innerHTML +=
+        `<li class="pointer">
+          <img class="invert" src="Audio.svg" alt="Audio Icon">
+          <div class="info">${trackName}</div>
+          <img class="invert playNow" src="play.svg" alt="Play Icon">
+        </li>`;
+    }
+
+    // Add event listeners to each list item
+    Array.from(fileUl.getElementsByTagName("li")).forEach(li => {
+      li.addEventListener("click", () => {
+        let track = li.querySelector(".info").innerHTML.trim();
+        playAudio(audios.find(a => a.includes(track)));
+      });
+    });
+
+    // Play the first audio file
+    let firstAudio = audios[0];
+    playAudio(firstAudio);
+
+    // Display the duration of the audio
+    currentAudio.addEventListener('loadedmetadata', () => {
+      document.querySelector('.audioDuration').innerHTML = `<span>${convertSecondsToMinutes(currentAudio.currentTime)} / ${convertSecondsToMinutes(currentAudio.duration)}</span>`;
+      document.querySelector('.circle').style.left = "0%"; // Reset seekbar position
+    });
+
+  } else {
+    // Handle case when no audio files are found
+    document.querySelector(".audioName").innerHTML = "<span>No audio files found</span>";
+    document.querySelector(".audioDuration").innerHTML = "<span>00:00 / 00:00</span>";
+    document.querySelector('.circle').style.left = "0%";
+    document.querySelector("#play").src = "play.svg"; // Default to play.svg when no files are found
+  }
+
+  // Set isPlaying to true only if audio is actually playing
+  isPlaying = !currentAudio.paused;
+  updatePlayBar(); // Call updatePlayBar to set the correct icon
+
+  // Event listeners for play button
+  document.querySelector('#play').addEventListener("click", () => {
+    if (currentAudio.paused) {
+      currentAudio.play();
+      isPlaying = true;
+      console.log("audio is playing");
+    } else {
+      currentAudio.pause();
+      isPlaying = false;
+      console.log("audio is paused");
+    }
+    updatePlayBar();
+  });
+
+  // Event listener for time update
+  currentAudio.addEventListener('timeupdate', () => {
+    document.querySelector('.audioDuration').innerHTML = `<span>${convertSecondsToMinutes(currentAudio.currentTime)} / ${convertSecondsToMinutes(currentAudio.duration)}</span>`;
+    document.querySelector('.circle').style.left = (currentAudio.currentTime / currentAudio.duration) * 100 + "%";
+  });
+
+  // Event listener for seekbar click
+  document.querySelector('.seekbar').addEventListener('click', (e) => {
+    let percent = (e.offsetX / e.target.getBoundingClientRect().width) * 100;
+    document.querySelector('.circle').style.left = percent + "%";
+    currentAudio.currentTime = (currentAudio.duration * percent) / 100;
+  });
+
+  // Event listeners for sidebar toggle
+  document.querySelector('.hamburger').addEventListener('click', () => {
+    document.querySelector('.left-part').style.left = "0";
+    document.querySelector('.left-part').style.width = "370px";
+  });
+
+  document.querySelector('.close').addEventListener('click', () => {
+    document.querySelector('.left-part').style.left = "-120%";
+  });
+}
+
+// Call the main function to set everything up
+main();
