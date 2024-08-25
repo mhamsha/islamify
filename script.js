@@ -11,8 +11,7 @@ function convertSecondsToMinutes(seconds) {
 
   // Ensure both minutes and seconds are two digits
   minutes = minutes < 10 ? "0" + minutes : minutes;
-  remainingSeconds =
-    remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds;
+  remainingSeconds = remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds;
 
   // Return the formatted time string
   return `${minutes}:${remainingSeconds}`;
@@ -20,6 +19,7 @@ function convertSecondsToMinutes(seconds) {
 
 async function getAudios(folder) {
   let a = await fetch(`/${folder}/`);
+  // console.log(a)
   currentFolder = folder;
   let response = await a.text();
   let div = document.createElement("div");
@@ -38,16 +38,13 @@ async function getAudios(folder) {
   let FileUl = document.querySelector(".audioList ul");
   FileUl.innerHTML = "";
   for (let element of Audios) {
-
     FileUl.innerHTML += `<li class="pointer item_lib">
         <img class="invert music" src="/Images/Audio.svg " alt="Audio Icon">
         <div class="info">${element}</div>
         <img class="invert playNow" src="/Images/play.svg" alt="Play Icon">
       </li>`;
 
-    Array.from(
-      document.querySelector(".audioList").getElementsByTagName("li")
-    ).forEach((e) => {
+    Array.from(document.querySelector(".audioList").getElementsByTagName("li")).forEach((e) => {
       e.addEventListener("click", () => {
         playAudio(e.querySelector(".info").innerHTML.trim());
       });
@@ -63,17 +60,13 @@ function playAudio(track, pause = false) {
   if (!pause) {
     currentAudio.play();
     play.src = "/Images/pause.svg";
-    document.querySelector(
-      ".audioDuration"
-    ).innerHTML = `<span>${convertSecondsToMinutes(
+    document.querySelector(".audioDuration").innerHTML = `<span>${convertSecondsToMinutes(
       currentAudio.currentTime
     )} / ${convertSecondsToMinutes(currentAudio.duration)}</span>`;
   }
 
   document.querySelector(".audioName").innerHTML = `<span>${track}</span>`;
-  document.querySelector(
-    ".audioDuration"
-  ).innerHTML = `<span>00:00 / 00:00</span>`;
+  document.querySelector(".audioDuration").innerHTML = `<span>00:00 / 00:00</span>`;
 }
 
 async function DisplayAlbums() {
@@ -133,9 +126,7 @@ async function main() {
 
   // Listen for time update event
   currentAudio.addEventListener("timeupdate", () => {
-    document.querySelector(
-      ".audioDuration"
-    ).innerHTML = `<span>${convertSecondsToMinutes(
+    document.querySelector(".audioDuration").innerHTML = `<span>${convertSecondsToMinutes(
       currentAudio.currentTime
     )} / ${convertSecondsToMinutes(currentAudio.duration)}</span>`;
     document.querySelector(".circle").style.left =
@@ -158,10 +149,7 @@ async function main() {
   });
 
   document.querySelector("#Previous").addEventListener("click", () => {
-    let currentAudioFileName = currentAudio.src
-      .split("/")
-      .pop()
-      .replaceAll("%20", " ");
+    let currentAudioFileName = currentAudio.src.split("/").pop().replaceAll("%20", " ");
     let index = Audios.indexOf(currentAudioFileName);
     if (index > 0) {
       currentAudio.src = `/${currentFolder}/` + Audios[index - 1];
@@ -192,18 +180,17 @@ async function main() {
         document.querySelector(".volume_btn").src = "/Images/volume.svg";
       }
     });
-    // Adding an event listener to mute the volume
-    document.querySelector(".volume_btn").addEventListener('click',()=> {
-     if(currentAudio.volume != 0){
+  // Adding an event listener to mute the volume
+  document.querySelector(".volume_btn").addEventListener("click", () => {
+    if (currentAudio.volume != 0) {
       previousVolume = currentAudio.volume;
       currentAudio.volume = 0;
       document.querySelector(".volume_btn").src = "/Images/mute.svg";
-     }
-      else {
+    } else {
       currentAudio.volume = previousVolume;
       document.querySelector(".volume_btn").src = "/Images/volume.svg";
-     }
-    });
+    }
+  });
 }
 
 main();
