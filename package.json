@@ -1,21 +1,21 @@
-{
-    "name": "audio-player",
-    "version": "1.0.0",
-    "description": "A simple audio player application",
-    "main": "Script.js",
-    "scripts": {
-      "start": "node server.js",
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "Your Name",
-    "license": "ISC",
-    "dependencies": {
-      "express": "^4.17.1"
-    },
-    "devDependencies": {
-      "eslint": "^7.32.0",
-      "eslint-plugin-import": "^2.24.2",
-      "eslint-plugin-node": "^11.1.0",
-      "eslint-plugin-promise": "^5.1.0"
-    }
-  }
+// {
+//     "name": "audio-player",
+//     "version": "1.0.0",
+//     "description": "A simple audio player application",
+//     "main": "Script.js",
+//     "scripts": {
+//       "start": "node server.js",
+//       "test": "echo \"Error: no test specified\" && exit 1"
+//     },
+//     "author": "Your Name",
+//     "license": "ISC",
+//     "dependencies": {
+//       "express": "^4.17.1"
+//     },
+//     "devDependencies": {
+//       "eslint": "^7.32.0",
+//       "eslint-plugin-import": "^2.24.2",
+//       "eslint-plugin-node": "^11.1.0",
+//       "eslint-plugin-promise": "^5.1.0"
+//     }
+//   }
